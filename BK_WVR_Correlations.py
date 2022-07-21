@@ -13,14 +13,13 @@ from dateutil import parser
 import scipy.stats
 
 
-
 raz=pA.ReadAzscan()
 x_am=am.AM_functions()
 
+path_to_all = '/Volumes/LaCie/BICEP/WVR_analysis/git_pipe/pipe/'
+
 class struct(object):
     pass
-
-
 
 def find_planck_to_rj_coeff():
     h=6.626176e-27 #erg*s
@@ -73,7 +72,7 @@ def start_up(wvr_scan, bk_tag, pf):
 
     #Extracting Trj atmograms from WVR PWV
 
-    path_to_Trj = 'am_datfiles_Az/SPole_annual_50/'+wvr_scan[:-4]+'/spectra/Trj_pk_BAK.txt'
+    path_to_Trj = path_to_all+'am_datfiles_Az/SPole_annual_50/'+wvr_scan[:-4]+'/spectra/Trj_pk_BAK.txt'
 
     if os.path.exists(path_to_Trj):
         wtxt=0
@@ -371,7 +370,7 @@ def corr_map_fpu(bk_tag, wvr_scan, pf):
                     cbar.ax.set_ylabel('Pearson Correlation Coefficient [r]')
                     pl.savefig(pf+bk_tag+'_psum-wvr_FPU_'+str(rx)+'_time'+str(time_stamp)+'_p3_'+str(p3_filt)+label+'.png')
                     pl.savefig(pf+bk_tag[:8]+'_psum-wvr_FPU_'+str(rx)+'_nscan'+str(iscan)+'_p3_'+str(p3_filt)+label+'.png')
-                    pl.show()
+                    pl.close()
 
                     pl.figure(figsize=(12,8))
                     pl.scatter(x,y, c='k')
@@ -385,7 +384,7 @@ def corr_map_fpu(bk_tag, wvr_scan, pf):
                     cbar.ax.set_ylabel('Pearson Correlation Coefficient [r]')
                     pl.savefig(pf+bk_tag+'_pdiff-wvr_FPU_'+str(rx)+'_time'+str(time_stamp)+'_p3_'+str(p3_filt)+label+'.png')
                     pl.savefig(pf+bk_tag[:8]+'_pdiff-wvr_FPU_'+str(rx)+'_nscan'+str(iscan)+'_p3_'+str(p3_filt)+label+'.png')
-                    pl.show()
+                    pl.close()
 
                     pl.figure(figsize=(12,8))
                     pl.scatter(x,y, c='k')
@@ -399,7 +398,7 @@ def corr_map_fpu(bk_tag, wvr_scan, pf):
                     cbar.ax.set_ylabel('Pearson Correlation Coefficient [r]')
                     pl.savefig(pf+bk_tag+'_psum-pdiff_FPU_'+str(rx)+'_time'+str(time_stamp)+'_p3_'+str(p3_filt)+label+'.png')
                     pl.savefig(pf+bk_tag[:8]+'_psum-pdiff_FPU_'+str(rx)+'_nscan'+str(iscan)+'_p3_'+str(p3_filt)+label+'.png')
-                    pl.show()
+                    pl.close()
 
 
                     pl.figure(figsize=(12,8))
@@ -414,7 +413,7 @@ def corr_map_fpu(bk_tag, wvr_scan, pf):
                     cbar.ax.set_ylabel('Pearson Correlation Coefficient [r]')
                     pl.savefig(pf+bk_tag+'_pdiff-wvr_abs_FPU_'+str(rx)+'_time'+str(time_stamp)+'_p3_'+str(p3_filt)+label+'.png')
                     pl.savefig(pf+bk_tag[:8]+'_pdiff-wvr_abs_FPU_'+str(rx)+'_nscan'+str(iscan)+'_p3_'+str(p3_filt)+label+'.png')
-                    pl.show()
+                    pl.close()
 
                     pl.figure(figsize=(12,8))
                     pl.scatter(x,y, c='k')
@@ -428,7 +427,7 @@ def corr_map_fpu(bk_tag, wvr_scan, pf):
                     cbar.ax.set_ylabel('Pearson Correlation Coefficient [r]')
                     pl.savefig(pf+bk_tag+'_psum-pdiff_abs_FPU_'+str(rx)+'_time'+str(time_stamp)+'_p3_'+str(p3_filt)+label+'.png')
                     pl.savefig(pf+bk_tag[:8]+'_psum-pdiff_abs_FPU_'+str(rx)+'_nscan'+str(iscan)+'_p3_'+str(p3_filt)+label+'.png')
-                    pl.show()
+                    pl.close()
 
 
                 #
@@ -640,7 +639,7 @@ def corr_map_fpu(bk_tag, wvr_scan, pf):
 
 def correlation_matrix(wvr_scan, bk_tag):
 
-    pf='../../../Postings/WVR_postings/20220210_BK_WVR_correlations/plots/'
+    pf=path_to_all+'../../../Postings/WVR_postings/20220210_BK_WVR_correlations/plots/'
 
 
     ets=bts.extract_ts(bk_tag, wvr_scan)
@@ -650,7 +649,7 @@ def correlation_matrix(wvr_scan, bk_tag):
     time_UTC_str, D_bad, waz_bad, calib_data_Gavg_bad, FH_bad = raz.read_Az_fast(wvr_scan, clean_mod=0)
 
     #Extracting Trj atmograms from WVR PWV
-    if os.path.exists('am_datfiles_Az/SPole_annual_50/'+wvr_scan[-4]+'/spectra/Trj_pk_BAK.txt'):
+    if os.path.exists(path_to_all+'am_datfiles_Az/SPole_annual_50/'+wvr_scan[-4]+'/spectra/Trj_pk_BAK.txt'):
         D30, D40, D90, D150, D210, D270, newaz = x_am.plot_Trj_az(wvr_scan, remake_post_fig=1, rewrite_txt=0, out_pk='Trj_pk_BAK.txt', posting_folder=pf)
     else:
         D30, D40, D90, D150, D210, D270, newaz = x_am.plot_Trj_az(wvr_scan, remake_post_fig=1, rewrite_txt=1, out_pk='Trj_pk_BAK.txt', posting_folder=pf)
@@ -688,7 +687,7 @@ def correlation_matrix(wvr_scan, bk_tag):
 
             wvr_atmo_Trx = wvr_atmo_Trj[str(rx)]#-np.nanmean(wvr_atmo_Trj[str(rx)])
 
-            x, y, det_a_list, det_b_list, x_pair, y_pair, det_pol= ets.det_fpu_location(rx, fn_save = pf+bk_tag+'det_fpu_location_'+str(rx)+'.png')
+            x, y, det_a_list, det_b_list, x_pair, y_pair, det_pol, El_fpu_center= ets.det_fpu_location(rx, fn_save = pf+bk_tag+'det_fpu_location_'+str(rx)+'.png')
             x_b = x_pair[np.where(det_pol=='b')]
             x_a = x_pair[np.where(det_pol=='a')]
             y_b = y_pair[np.where(det_pol=='b')]
@@ -782,9 +781,6 @@ def correlation_matrix(wvr_scan, bk_tag):
 
                         x_min_wvr_idx = np.where(calib_az>= np.min(x_diff))[0][0]
                         x_max_wvr_idx = np.where(calib_az>= np.max(x_diff))[0][0]
-
-
-
 
 
                         print(t_min_wvr, t_max_wvr)
@@ -1368,7 +1364,7 @@ def first_plots(wvr_scan, bk_tag, pf):
 
 
 #main
-f = open('../txtfiles/pointing_parameters_2018_fast.txt','rb')
+f = open(path_to_all+'../txtfiles/pointing_parameters_2018_fast.txt','rb')
 point_par = pk.load(f)
 f.close()
 

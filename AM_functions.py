@@ -35,7 +35,7 @@ class AM_functions(object):
 
         self.ch=[1.05,1.9,3.2,6.1]
         self.freqs=[self.IF-self.ch[3],self.IF-self.ch[2],self.IF-self.ch[1],self.IF-self.ch[0],self.IF+self.ch[0],self.IF+self.ch[1],self.IF+self.ch[2],self.IF+self.ch[3]]
-
+        self.path_to_all = '/Volumes/LaCie/BICEP/WVR_analysis/git_pipe/pipe/'
 
     def plot_out_file(self, filename):
         with open('am_software/cfg_files/'+filename) as f:
@@ -1097,17 +1097,17 @@ class AM_functions(object):
             return p_best[5], z_corr_err, delta
 
     def create_am_datfile_Az(self,filename, pathtofn, clean_mod=3, clean_method='import_model', path_to_data='', template='SPole_annual_50.amc'):
-        if not os.path.exists(f'am_datfiles_Az/'+template[:-4]):
-            os.makedirs(f'am_datfiles_Az/'+template[:-4])
-        if not os.path.exists(f'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]):
-            os.makedirs(f'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4])
+        if not os.path.exists(self.path_to_all+'am_datfiles_Az/'+template[:-4]):
+            os.makedirs(self.path_to_all+'am_datfiles_Az/'+template[:-4])
+        if not os.path.exists(fself.path_to_all+'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]):
+            os.makedirs(self.path_to_all+'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4])
 
         if clean_mod==0:
             D_clean, waz, mod_removed_data=raz.read_Az_fast(filename, pathtofn=pathtofn, clean_mod=clean_mod, clean_method=clean_method)
         else:
             D_clean, waz, mod_removed_data, p_double, p_err_double, p_single, p_err_single, calib_data_Gavg, FH =raz.read_Az_fast(filename, pathtofn=pathtofn, clean_mod=clean_mod, clean_method=clean_method)
 
-        path='am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]
+        path=self.path_to_all+'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]
         pickle_fn=path+'/'+filename[:-4]+'_clean_mod'+str(clean_mod)+'_method_'+clean_method+'_pickle_temps.txt'
 
         pickle_Temps= {'am_dat_filename': [], 'wAz':[],'scanN':[], 'T0':[], 'T1':[], 'T2':[], 'T3':[]}
@@ -1134,7 +1134,7 @@ class AM_functions(object):
             print('azn=', azn)
             print('scanN=',scanN)
             print('az=', az)
-            dat_fn='am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]+'/'+filename[:-4]+'_scanN'+str(scanN)+'_Az'+str(az)+'_clean_mod'+str(clean_mod)+'_method_'+clean_method+'_am'+open_endstring
+            dat_fn=self.path_to_all+'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]+'/'+filename[:-4]+'_scanN'+str(scanN)+'_Az'+str(az)+'_clean_mod'+str(clean_mod)+'_method_'+clean_method+'_am'+open_endstring
             with open(dat_fn,'w+') as f:
                 print('writing on'+dat_fn)
                 f.write('1.25 1.50 {0}\n'.format(T0[azn]))
@@ -1393,10 +1393,10 @@ class AM_functions(object):
 
         El=55.0
 
-        if not os.path.exists('am_datfiles_Az/'+template[:-4]):
-            os.makedirs('am_datfiles_Az/'+template[:-4])
+        if not os.path.exists(self.path_to_all+'am_datfiles_Az/'+template[:-4]):
+            os.makedirs(self.path_to_all+'am_datfiles_Az/'+template[:-4])
 
-        path='am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]
+        path=self.path_to_all+'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]
         #pathtofn='../../wvr1_data_local/'+filename[:-9]+'/'
         pickle_fn=path+'/'+filename[:-4]+'_clean_mod'+str(clean_mod)+'_method_'+str(clean_method)+'_fitoutput.txt' #just double mod removed+tilt_correction
         pickle_fn_temps=path+'/'+filename[:-4]+'_clean_mod'+str(clean_mod)+'_method_'+str(clean_method)+'_pickle_temps.txt'
@@ -2407,8 +2407,8 @@ class AM_functions(object):
 
 
         def Trjatmo_from_pwvatmo(fn):
-            pickle_fn='am_datfiles_Az/SPole_annual_50/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_fitoutput.txt'
-            pickle_fn_temps='am_datfiles_Az/SPole_annual_50/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_pickle_temps.txt'
+            pickle_fn=self.path_to_all+'am_datfiles_Az/SPole_annual_50/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_fitoutput.txt'
+            pickle_fn_temps=self.path_to_all+'am_datfiles_Az/SPole_annual_50/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_pickle_temps.txt'
             #using fit or import_model should be the same here as I am just using it to extract waz
 
             f = open(pickle_fn_temps,'rb')
@@ -2427,7 +2427,7 @@ class AM_functions(object):
 
         az, fs, pwv, D_pwv = Trjatmo_from_pwvatmo(scan)
 
-        path='am_datfiles_Az/SPole_annual_50/'
+        path=self.path_to_all+'am_datfiles_Az/SPole_annual_50/'
         #path='../../pipeline/am_datfiles_Az/SPole_annual_50/'
 
         folder=path+scan[:-4]
