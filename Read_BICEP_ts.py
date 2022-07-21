@@ -13,6 +13,8 @@ from scipy.interpolate import interp1d
 from scipy import interpolate
 from dateutil import parser
 
+path_to_all = '/Volumes/LaCie/BICEP/WVR_analysis/git_pipe/pipe/'
+
 
 raz=pA.ReadAzscan()
 
@@ -63,7 +65,7 @@ class extract_ts(object):
         if not os.path.exists(f'tod/ba/'+tag):
             os.makedirs(f'tod/ba/'+tag)
 
-        d_dict = mat73.loadmat('tod/ba/bicep_array_'+tag+'.mat')
+        d_dict = mat73.loadmat(path_to_all+'tod/ba/bicep_array_'+tag+'.mat')
 
         d = toStruct(**d_dict)
 
@@ -304,7 +306,8 @@ class extract_ts(object):
 
         pl.figure(figsize=(10,6))
         pl.scatter(x,y)
-        pl.scatter(x_pair,y_pair, s=100, marker='*', c=offset_from_bkel)
+        #pl.scatter(x_pair,y_pair, s=100, marker='*', c=offset_from_bkel)
+        pl.scatter(x_pair,y_pair, s=100, marker='o', c='r')
         pl.title('FPU Map')
         pl.colorbar()
         pl.savefig(fn_save)

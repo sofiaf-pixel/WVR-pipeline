@@ -39,7 +39,8 @@ class ReadAzscan(object):
 
         self.ch=[1.05,1.9,3.2,6.1]
         self.freqs=[self.IF-self.ch[3],self.IF-self.ch[2],self.IF-self.ch[1],self.IF-self.ch[0],self.IF+self.ch[0],self.IF+self.ch[1],self.IF+self.ch[2],self.IF+self.ch[3]]
-
+        self.path_to_all = '/Volumes/LaCie/BICEP/WVR_analysis/git_pipe/pipe/'
+        self.path_to_wvr1data = '/Volumes/LaCie/BICEP/WVR_analysis/'
 
     def findScans(self, az, nwrap=360):
         '''
@@ -114,7 +115,7 @@ class ReadAzscan(object):
 
 
     def read_Az_slow(self, filename, pathtofn='', show_plots=0):
-        with open('../../wvr1_data_local/'+pathtofn+filename) as f:
+        with open(self.path_to_all+'../../wvr1_data_local/'+pathtofn+filename) as f:
              lines = (line for line in f if not (line.startswith('#') or line.startswith('TIME')))
              FH = np.loadtxt(lines, dtype='str', delimiter=' ', skiprows=1, usecols = (0,1,19,20,21,22,23,24))
              time=FH[:,0]
@@ -159,7 +160,7 @@ class ReadAzscan(object):
                 title = filename.replace('.txt','_atmogram')
                 suptitle(title,y=0.97, fontsize=10)
                 print("Saving %s.png"%title)
-                pl.savefig('../output_plots/T_atmograms/'+title+'_BeforeModSub.png')
+                pl.savefig(self.path_to_all+'../output_plots/T_atmograms/'+title+'_BeforeModSub.png')
 
             if show_plots==1:
                 plt.show()
@@ -572,7 +573,7 @@ class ReadAzscan(object):
             ax8.legend(loc='upper right')
 
             pl.suptitle('Single and Double Modulation Fit and Subtraction\nFitted Function: C + A⋅sin(2⋅l_scale⋅theta_az + phiA)+ B⋅sin(l_scale⋅theta_az + phiB)\n'+fn[:-4])
-            pl.savefig('../output_plots/T_atmograms/'+fn[-31:-4]+'_ModFit.png')
+            pl.savefig(self.path_to_all+'../output_plots/T_atmograms/'+fn[-31:-4]+'_ModFit.png')
 
             if showplots==1:
                 pl.show()
@@ -629,7 +630,7 @@ class ReadAzscan(object):
             ax8.legend(loc='upper right')
 
             pl.suptitle('Double Modulation Fit and Subtraction\nFitted Function: C + A⋅sin(2⋅theta_az + phi)\n'+fn[:-4])
-            pl.savefig('../output_plots/T_atmograms/'+fn[-31:-4]+'_DoubleModFit.png')
+            pl.savefig(self.path_to_all+'../output_plots/T_atmograms/'+fn[-31:-4]+'_DoubleModFit.png')
 
             if showplots==1:
                 pl.show()
@@ -711,7 +712,7 @@ class ReadAzscan(object):
             #ax12.legend(loc='upper right')
 
             pl.suptitle('Single Modulation Fit and Subtraction\nFitted Function: C + A⋅sin(theta_az + phi)\n'+fn[:-4])
-            pl.savefig('../output_plots/T_atmograms/'+fn[-31:-4]+'_SingleModFit'+method+'.png')
+            pl.savefig(self.path_to_all+'../output_plots/T_atmograms/'+fn[-31:-4]+'_SingleModFit'+method+'.png')
             if showplots==1:
                 pl.show()
             else:
@@ -735,13 +736,13 @@ class ReadAzscan(object):
         #      FH = np.loadtxt(lines, dtype='str', delimiter=' ', skiprows=1, usecols = (0,1,19,20,21,22,23,24))
         #      time=FH[:,0]
 
-        with open('../../wvr1_data_local/'+pathtofn+filename) as f:
+        with open(self.path_to_all+'../../wvr1_data_local/'+pathtofn+filename) as f:
             lines = (line for line in f if not (line.startswith('#') or line.startswith('TIME')))
             time = np.loadtxt(lines, dtype='str', delimiter=' ', skiprows=1, usecols = (0))
             #The data order is: TIME [TIMEWVR CH0C CH0A CH0H CH0B CH1C CH1A CH1H CH1B CH2C CH2A CH2H CH2B CH3C CH3A CH3H CH3B EL AZ]
             #time=FH_all[:,0]
 
-        with open('../../wvr1_data_local/'+pathtofn+filename) as f:
+        with open(self.path_to_all+'../../wvr1_data_local/'+pathtofn+filename) as f:
             lines = (line for line in f if not (line.startswith('#') or line.startswith('TIME')))
             FH = np.loadtxt(lines, delimiter=' ', skiprows=1, usecols = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19))
             #The data order is: TIMEWVR CH0C CH0A CH0H CH0B CH1C CH1A CH1H CH1B CH2C CH2A CH2H CH2B CH3C CH3A CH3H CH3B EL AZ
@@ -882,13 +883,13 @@ class ReadAzscan(object):
 
 
         mat = np.matrix(interp_data)
-        with open('../../wvr1_data_local/'+filename[:-4]+'_interp.txt','wb') as f:
+        with open(self.path_to_all+'../../wvr1_data_local/'+filename[:-4]+'_interp.txt','wb') as f:
             for line in mat:
                 np.savetxt(f, line, fmt='%.5f')
         f.close()
 
         mat_c = np.matrix(calib_data)
-        with open('../../wvr1_data_local/'+filename[:-4]+'_calib.txt','wb') as f:
+        with open(self.path_to_all+'../../wvr1_data_local/'+filename[:-4]+'_calib.txt','wb') as f:
             for line in mat_c:
                 np.savetxt(f, line, fmt='%.5f')
         f.close()
@@ -916,7 +917,7 @@ class ReadAzscan(object):
                 title = filename.replace('.txt','_atmogram')
                 suptitle(title+'\nBefore mod subtraction',y=0.97, fontsize=10)
                 print("Saving %s.png"%title)
-                pl.savefig('../output_plots/T_atmograms/'+title+'_BeforeModSub.png')
+                pl.savefig(self.path_to_all+'../output_plots/T_atmograms/'+title+'_BeforeModSub.png')
                 if show_mod_plots==1:
                     plt.show()
                 else:
@@ -981,7 +982,7 @@ class ReadAzscan(object):
             subplots_adjust(hspace=0.2)
             title = filename[-31:].replace('_scanAz_fast.txt','')
             #suptitle(title+'\nChannel 0',y=0.97, fontsize=18)
-            pl.savefig('../output_plots/T_atmograms/'+title+'_AfterModSub_'+clean_method+'_allsteps_Tch0.png')
+            pl.savefig(self.path_to_all+'../output_plots/T_atmograms/'+title+'_AfterModSub_'+clean_method+'_allsteps_Tch0.png')
             plt.close()
 
 
@@ -999,7 +1000,7 @@ class ReadAzscan(object):
                     title = filename[-31:].replace('.txt','_atmogram_modclean')
                     suptitle(title+'\nAfter mod subtraction',y=0.97, fontsize=10)
                     print("Saving %s.png"%title)
-                    pl.savefig('../output_plots/T_atmograms/'+title+'_AfterModSub_'+clean_method+'.png')
+                    pl.savefig(self.path_to_all+'../output_plots/T_atmograms/'+title+'_AfterModSub_'+clean_method+'.png')
                     if show_mod_plots==1:
                         plt.show()
                     else:
@@ -1019,7 +1020,7 @@ class ReadAzscan(object):
                     title = filename[-31:].replace('.txt','_atmogram_doublemod')
                     suptitle(title+'\nDouble modulation model',y=0.97, fontsize=10)
                     print("Saving %s.png"%title)
-                    pl.savefig('../output_plots/T_atmograms/'+title+'_'+clean_method+'.png')
+                    pl.savefig(self.path_to_all+'../output_plots/T_atmograms/'+title+'_'+clean_method+'.png')
                     if show_mod_plots==1:
                         plt.show()
                     else:
@@ -1038,7 +1039,7 @@ class ReadAzscan(object):
                     subplots_adjust(hspace=0.01)
                     title = filename[-31:].replace('.txt','_atmogram_singlemod')
                     suptitle(title+'\nSingle modulation model',y=0.97, fontsize=10)
-                    pl.savefig('../output_plots/T_atmograms/'+title+'_'+clean_method+'.png')
+                    pl.savefig(self.path_to_all+'../output_plots/T_atmograms/'+title+'_'+clean_method+'.png')
                     #savefig(title+'.png')
                     if show_mod_plots==1:
                         plt.show()
@@ -1100,15 +1101,15 @@ class ReadAzscan(object):
                     pl.show()
                 return az, fs, D_pwv
 
-            if os.path.exists('am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_pickle_temps.txt'):
-                pickle_fn_temps='am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_pickle_temps.txt'
+            if os.path.exists(self.path_to_all+'am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_pickle_temps.txt'):
+                pickle_fn_temps=self.path_to_all+'am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_pickle_temps.txt'
             else:
-                pickle_fn_temps='am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_fit_pickle_temps.txt'
+                pickle_fn_temps=self.path_to_all+'am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_fit_pickle_temps.txt'
 
-            if os.path.exists('am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_fitoutput.txt'):
-                pickle_fn='am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_fitoutput.txt'
+            if os.path.exists(self.path_to_all+'am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_fitoutput.txt'):
+                pickle_fn=self.path_to_all+'am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_fitoutput.txt'
             else:
-                pickle_fn='am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_fit_fitoutput.txt'
+                pickle_fn=self.path_to_all+'am_datfiles_Az/'+template+'/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_fit_fitoutput.txt'
 
             print(fn)
             D_clean, waz_1, single_mod_removed_data, p2, p2_err, p1, p1_err, calib_data_Gavg, FH = self.read_Az_fast(fn)
@@ -1141,9 +1142,11 @@ class ReadAzscan(object):
             return waz, az, calib_az, fs, idx, pwv_ts, D_pwv, tot
 
 
-    def calib_pointing(self, wvr_az, point_par_fn='../txtfiles/pointing_parameters_2018_fast.txt'):
+    def calib_pointing(self, wvr_az, point_par_fn='pointing_parameters_2018_fast.txt'):
 
-        f = open(point_par_fn,'rb')
+        path = self.path_to_all + '../txtfiles/'
+
+        f = open(path+point_par_fn,'rb')
         point_par = pk.load(f)
         f.close()
 

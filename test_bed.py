@@ -28,6 +28,8 @@ bk=BK_an.extract_ts()
 wvr_scan='20200418_190135_scanAz_fast.txt'
 bk_tag='20200418B01_dk203'
 
+thesis_posting = '/Volumes/LaCie/BICEP/Postings/WVR_postings/20220720_thesis_plots/'
+
 ets=bts.extract_ts(bk_tag, wvr_scan)
 
 
@@ -37,4 +39,4 @@ ets=bts.extract_ts(bk_tag, wvr_scan)
 #x_am.plot_Trj_az('20200418_190135_scanAz_fast.txt', Az_min=0, Az_max=360, remake_post_fig=0, rewrite_txt=1, rewrite_amc=0, datafolder='BAElnod_data/', posting_folder='')
 
 
-x, y, det_a_list, det_b_list, x_pair, y_pair, det_pol= ets.det_fpu_location(270, fn_save = '~/Desktop/PhD_Thesis/'+bk_tag+'det_fpu_location_270.png', show_plots=1)
+x, y, det_a_list, det_b_list, x_pair, y_pair, det_pol= ets.det_fpu_location(270, fn_save = thesis_posting+bk_tag+'det_fpu_location_270.png', show_plots=1)
