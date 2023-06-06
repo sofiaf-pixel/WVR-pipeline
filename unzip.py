@@ -8,6 +8,8 @@ month='201909'
 
 os.system(f"rm "+path+month+"*.txt")
 
+
+
 for filelist in os.listdir(path):
     #os.system(f"rm "+path+".DS_store")
     print(filelist)

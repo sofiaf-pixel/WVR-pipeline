@@ -321,13 +321,14 @@ def corr_map_fpu(bk_tag, wvr_scan, pf):
                 check=0
                 while check==0:
                     try:
-                        fn_trial='BK_'+bk_tag+'_rx_'+str(rx)+'_idet_'+str(0)+'_WVR_'+wvr_scan[:-4]+'_p3_'+str(p3_filt)+'_pk.txt'
+                        fn_trial=path_to_all+'BK_'+bk_tag+'_rx_'+str(rx)+'_idet_'+str(0)+'_WVR_'+wvr_scan[:-4]+'_p3_'+str(p3_filt)+'_pk.txt'
                         f = open(fn_trial,'rb')
                         corr_trial = pk.load(f)
                         f.close()
                         check=1
-                    except:
-                        print('Trying next det')
+                    except Exception as e:
+                        print(e)
+                        print('Trying next det\n')
                         check=0
 
                 nscans = len(corr_trial['time_axis'])
@@ -649,10 +650,10 @@ def correlation_matrix(wvr_scan, bk_tag):
     time_UTC_str, D_bad, waz_bad, calib_data_Gavg_bad, FH_bad = raz.read_Az_fast(wvr_scan, clean_mod=0)
 
     #Extracting Trj atmograms from WVR PWV
-    if os.path.exists(path_to_all+'am_datfiles_Az/SPole_annual_50/'+wvr_scan[-4]+'/spectra/Trj_pk_BAK.txt'):
-        D30, D40, D90, D150, D210, D270, newaz = x_am.plot_Trj_az(wvr_scan, remake_post_fig=1, rewrite_txt=0, out_pk='Trj_pk_BAK.txt', posting_folder=pf)
-    else:
-        D30, D40, D90, D150, D210, D270, newaz = x_am.plot_Trj_az(wvr_scan, remake_post_fig=1, rewrite_txt=1, out_pk='Trj_pk_BAK.txt', posting_folder=pf)
+    # if os.path.exists(path_to_all+'am_datfiles_Az/SPole_annual_50/'+wvr_scan[-4]+'/spectra/Trj_pk_BAK.txt'):
+    #     D30, D40, D90, D150, D210, D270, newaz = x_am.plot_Trj_az(wvr_scan, remake_post_fig=1, rewrite_txt=0, out_pk='Trj_pk_BAK.txt', posting_folder=pf)
+    # else:
+    D30, D40, D90, D150, D210, D270, newaz = x_am.plot_Trj_az(wvr_scan, remake_post_fig=1, rewrite_txt=0, out_pk='Trj_pk_BAK.txt', posting_folder=pf)
 
     wvr_atmo_Trj = {'30':D30, '40':D40, '90':D90, '150':D150, '210':D210, '270':D270}
 
@@ -695,161 +696,161 @@ def correlation_matrix(wvr_scan, bk_tag):
 
             for det in range(len(det_a_list)):
 
-                try:
+                #try:
 
-                    a_det = det_a_list[det]
-                    i_det_b=np.where(x_b==x_a[det])[0]
-                    b_det = det_b_list[i_det_b[0]]
+                a_det = det_a_list[det]
+                i_det_b=np.where(x_b==x_a[det])[0]
+                b_det = det_b_list[i_det_b[0]]
 
-                    pl.figure(figsize=(10,6))
-                    pl.scatter(x,y, c='k')
-                    pl.scatter(x_a[det],y_a[det], s=150, marker='o', c='r', label='det A')
-                    pl.scatter(x_b[i_det_b],y_b[i_det_b], s=150, marker='*', c='y', label='det B')
-                    pl.xlabel('Az[deg]')
-                    pl.ylabel('El[deg]')
-                    pl.suptitle('FPU Map')
-                    pl.legend(title='Selected Pair')
-                    pl.title('Az offs = '+str(round(x_a[det],2))+' - El Offs = '+str(round(y_a[det],2)))
-                    pl.savefig(pf+bk_tag+'det_fpu_location_'+str(rx)+'_det'+str(det)+label+'.png')
-                    pl.savefig(pf+bk_tag[:8]+'det_fpu_location_'+str(rx)+'_det'+str(det)+label+'.png')
-                    pl.close()
+                pl.figure(figsize=(10,6))
+                pl.scatter(x,y, c='k')
+                pl.scatter(x_a[det],y_a[det], s=150, marker='o', c='r', label='det A')
+                pl.scatter(x_b[i_det_b],y_b[i_det_b], s=150, marker='*', c='y', label='det B')
+                pl.xlabel('Az[deg]')
+                pl.ylabel('El[deg]')
+                pl.suptitle('FPU Map')
+                pl.legend(title='Selected Pair')
+                pl.title('Az offs = '+str(round(x_a[det],2))+' - El Offs = '+str(round(y_a[det],2)))
+                pl.savefig(pf+bk_tag+'det_fpu_location_'+str(rx)+'_det'+str(det)+label+'.png')
+                pl.savefig(pf+bk_tag[:8]+'det_fpu_location_'+str(rx)+'_det'+str(det)+label+'.png')
+                pl.close()
 
-                    #az_bk, T_rx_psum_bk, T_rx_pdiff_bk, D_sum_bk, D_diff_bk = ets.pl_tod_atmo(ets.bk_tag, tod, rx, i_det=(a_det, b_det), az_offs_det=x_a[det], p3=p3_filt, i_det_savefig=det)
+                #az_bk, T_rx_psum_bk, T_rx_pdiff_bk, D_sum_bk, D_diff_bk = ets.pl_tod_atmo(ets.bk_tag, tod, rx, i_det=(a_det, b_det), az_offs_det=x_a[det], p3=p3_filt, i_det_savefig=det)
 
-                    for p3_filt in [False, True]:
+                for p3_filt in [False, True]:
 
-                        print('p3_filt = ', p3_filt)
+                    print('p3_filt = ', p3_filt)
 
-                        az_bk, T_rx_psum_bk, T_rx_pdiff_bk, D_sum_bk, D_diff_bk = ets.pl_tod_atmo(ets.bk_tag, tod, rx, i_det=(a_det, b_det), az_offs_det=x_a[det], p3=p3_filt, i_det_savefig=det, posting_folder='None')
+                    az_bk, T_rx_psum_bk, T_rx_pdiff_bk, D_sum_bk, D_diff_bk = ets.pl_tod_atmo(ets.bk_tag, tod, rx, i_det=(a_det, b_det), az_offs_det=x_a[det], p3=p3_filt, i_det_savefig=det, posting_folder='None')
 
-                        t_bk=np.array(tod.std)
+                    t_bk=np.array(tod.std)
 
-                        time_UTC=[]
-                        time_UTC=[parser.parse(time_str) for time_str in time_UTC_str]
+                    time_UTC=[]
+                    time_UTC=[parser.parse(time_str) for time_str in time_UTC_str]
 
-                        fs_wvr=fs
-                        full_time_wvr=[time_UTC[int(fs_s_i)] for fs_s_i in fs_wvr.s]
-                        xlabels_wvr=np.array(["{:d}:{:02d}".format(time_i.hour, time_i.minute) for time_i in full_time_wvr])
-                        nscans_wvr = len(fs_wvr.s)
-                        xticks_wvr = np.arange(nscans_wvr)
-                        x_sum, D_sum = raz.interpToImage_BK(az_bk, T_rx_psum_bk, fs_bk)
-                        x_diff, D_diff = raz.interpToImage_BK(az_bk, T_rx_pdiff_bk, fs_bk)
+                    fs_wvr=fs
+                    full_time_wvr=[time_UTC[int(fs_s_i)] for fs_s_i in fs_wvr.s]
+                    xlabels_wvr=np.array(["{:d}:{:02d}".format(time_i.hour, time_i.minute) for time_i in full_time_wvr])
+                    nscans_wvr = len(fs_wvr.s)
+                    xticks_wvr = np.arange(nscans_wvr)
+                    x_sum, D_sum = raz.interpToImage_BK(az_bk, T_rx_psum_bk, fs_bk)
+                    x_diff, D_diff = raz.interpToImage_BK(az_bk, T_rx_pdiff_bk, fs_bk)
 
-                        full_time=[t_bk[int(fs_s_i)] for fs_s_i in fs_bk.sf]
-                        xlabels=np.array(["{:d}:{:02d}".format(time_i.hour, time_i.minute) for time_i in full_time])
-                        nscans_bk = len(fs_bk.sf)
-                        xticks = np.arange(nscans_bk)
-                        #
-                        # full_time_dt = np.array([datetime.time(ft_i) for ft_i in full_time])
-                        # full_time_wvr_dt = np.array([datetime.time(ft_i) for ft_i in full_time_wvr])
-                        #
-                        # t_min_wvr=datetime.time(full_time_wvr[0])
-                        # t_max_wvr=datetime.time(full_time_wvr[len(full_time_wvr)-1])
-                        # t_min_bk=datetime.time(full_time[0])
-                        # t_max_bk=datetime.time(full_time[len(full_time)-1])
-                        #
-                        # x_min_wvr_idx = np.where(calib_az>= np.min(x_diff))[0][0]
-                        #
-                        # x_max_wvr_idx = np.where(calib_az>= np.max(x_diff))[0][0]
-                        #
-                        # if (t_min_bk <= t_min_wvr):
-                        #
-                        #     bk_time_mask = np.where(full_time_dt>=t_min_wvr)[0]
-                        #     wvr_time_mask = np.where(full_time_wvr_dt<=t_max_bk)[0]
-                        #     extent_wvr = [0, len(wvr_time_mask), np.min(calib_az), np.max(calib_az)]
-                        #
-                        # else:
-                        #
-                        #     bk_time_mask = np.where(full_time_dt<=t_max_wvr)[0]
-                        #     wvr_time_mask = np.where(full_time_wvr_dt>=t_min_bk)[0]
-                        #
-                        #     extent_wvr = [wvr_time_mask[0], wvr_time_mask[len(wvr_time_mask)-1], np.min(calib_az), np.max(calib_az)]
-
-
-
-                        full_time_dt = np.array([datetime.time(ft_i) for ft_i in full_time])
-                        full_time_wvr_dt = np.array([datetime.time(ft_i) for ft_i in full_time_wvr])
-
-                        t_min_wvr=datetime.time(full_time_wvr[0])
-                        t_max_wvr=datetime.time(full_time_wvr[len(full_time_wvr)-1])
-                        t_min_bk=datetime.time(full_time[0])
-                        t_max_bk=datetime.time(full_time[len(full_time)-1])
-
-                        if  any(caz <0 for caz in calib_az):
-                            print('adding 360')
-                            calib_az=[i+360 for i in calib_az]
-
-                        x_min_wvr_idx = np.where(calib_az>= np.min(x_diff))[0][0]
-                        x_max_wvr_idx = np.where(calib_az>= np.max(x_diff))[0][0]
-
-
-                        print(t_min_wvr, t_max_wvr)
-                        print(t_min_bk, t_max_bk)
-
-                        bk_time_mask = np.where((full_time_dt<=t_max_wvr)&(full_time_dt>=t_min_wvr))[0]
-                        wvr_time_mask = np.where((full_time_wvr_dt>=t_min_bk)&(full_time_wvr_dt<=t_max_bk))[0]
-
-                        if (t_min_bk <= t_min_wvr):
-                            extent_wvr = [0, len(wvr_time_mask), np.min(calib_az), np.max(calib_az)]
-                        else:
-                            extent_wvr = [wvr_time_mask[0], wvr_time_mask[len(wvr_time_mask)-1], np.min(calib_az), np.max(calib_az)]
+                    full_time=[t_bk[int(fs_s_i)] for fs_s_i in fs_bk.sf]
+                    xlabels=np.array(["{:d}:{:02d}".format(time_i.hour, time_i.minute) for time_i in full_time])
+                    nscans_bk = len(fs_bk.sf)
+                    xticks = np.arange(nscans_bk)
+                    #
+                    # full_time_dt = np.array([datetime.time(ft_i) for ft_i in full_time])
+                    # full_time_wvr_dt = np.array([datetime.time(ft_i) for ft_i in full_time_wvr])
+                    #
+                    # t_min_wvr=datetime.time(full_time_wvr[0])
+                    # t_max_wvr=datetime.time(full_time_wvr[len(full_time_wvr)-1])
+                    # t_min_bk=datetime.time(full_time[0])
+                    # t_max_bk=datetime.time(full_time[len(full_time)-1])
+                    #
+                    # x_min_wvr_idx = np.where(calib_az>= np.min(x_diff))[0][0]
+                    #
+                    # x_max_wvr_idx = np.where(calib_az>= np.max(x_diff))[0][0]
+                    #
+                    # if (t_min_bk <= t_min_wvr):
+                    #
+                    #     bk_time_mask = np.where(full_time_dt>=t_min_wvr)[0]
+                    #     wvr_time_mask = np.where(full_time_wvr_dt<=t_max_bk)[0]
+                    #     extent_wvr = [0, len(wvr_time_mask), np.min(calib_az), np.max(calib_az)]
+                    #
+                    # else:
+                    #
+                    #     bk_time_mask = np.where(full_time_dt<=t_max_wvr)[0]
+                    #     wvr_time_mask = np.where(full_time_wvr_dt>=t_min_bk)[0]
+                    #
+                    #     extent_wvr = [wvr_time_mask[0], wvr_time_mask[len(wvr_time_mask)-1], np.min(calib_az), np.max(calib_az)]
 
 
 
-                        xlabels=np.array(xlabels)
-                        xlabels_wvr=np.array(xlabels_wvr)
+                    full_time_dt = np.array([datetime.time(ft_i) for ft_i in full_time])
+                    full_time_wvr_dt = np.array([datetime.time(ft_i) for ft_i in full_time_wvr])
 
-                        xticks_mask=xticks[bk_time_mask]
-                        xlabels_mask=xlabels[bk_time_mask]
-                        xticks_wvr_mask=xticks_wvr[wvr_time_mask]
-                        xlabels_wvr_mask=xlabels_wvr[wvr_time_mask]
+                    t_min_wvr=datetime.time(full_time_wvr[0])
+                    t_max_wvr=datetime.time(full_time_wvr[len(full_time_wvr)-1])
+                    t_min_bk=datetime.time(full_time[0])
+                    t_max_bk=datetime.time(full_time[len(full_time)-1])
 
-                        D_sum_bk_tcut = D_sum_bk[:,bk_time_mask]
-                        D_diff_bk_tcut = D_diff_bk[:,bk_time_mask]
-                        wvr_atmo_tcut = wvr_atmo[:,wvr_time_mask]
-                        wvr_atmo_Trx_tcut = wvr_atmo_Trx[:,wvr_time_mask]
+                    if  any(caz <0 for caz in calib_az):
+                        print('adding 360')
+                        calib_az=[i+360 for i in calib_az]
 
-                        nscans_bk = len(D_sum_bk[10,:])
+                    x_min_wvr_idx = np.where(calib_az>= np.min(x_diff))[0][0]
+                    x_max_wvr_idx = np.where(calib_az>= np.max(x_diff))[0][0]
 
-                        az_bk_tag = az_bk[int(fs_bk.sf[0]):int(fs_bk.ef[nscans_bk-1])]
-                        az_bk_shifted = [(az_bk_i + az_offs) for az_bk_i in az_bk_tag]
 
-                        nscans=len(wvr_atmo[10,:])
+                    print(t_min_wvr, t_max_wvr)
+                    print(t_min_bk, t_max_bk)
 
-                        tod_wvr = np.zeros(nscans)
-                        tod_wvr_list = []
-                        tod_wvr_Trx_list = []
+                    bk_time_mask = np.where((full_time_dt<=t_max_wvr)&(full_time_dt>=t_min_wvr))[0]
+                    wvr_time_mask = np.where((full_time_wvr_dt>=t_min_bk)&(full_time_wvr_dt<=t_max_bk))[0]
 
-                        x_az_atmo=np.arange(len(wvr_atmo[:,10]))
-
-                        mask_match_bk = np.where((x_az_atmo>np.nanmin(az_bk_shifted)) & (x_az_atmo<np.nanmax(az_bk_shifted)))
-                        wvr_atmo_matchbk = wvr_atmo_tcut[mask_match_bk[0],:]
-
-                        wvr_atmo_Trx_matchbk = wvr_atmo_Trx_tcut[mask_match_bk[0],:]
-
-                        x_az_atmo_matchbk = [az_i-az_offs for az_i in x_az_atmo[mask_match_bk]]
-                        x_az_atmo_matchbk_labels = [int(az_i) for az_i in x_az_atmo_matchbk]
-                        #x_az_atmo_matchbk = x_az_atmo[mask_match_bk]
+                    if (t_min_bk <= t_min_wvr):
+                        extent_wvr = [0, len(wvr_time_mask), np.min(calib_az), np.max(calib_az)]
+                    else:
+                        extent_wvr = [wvr_time_mask[0], wvr_time_mask[len(wvr_time_mask)-1], np.min(calib_az), np.max(calib_az)]
 
 
 
-                        #BK-WVR correlation
-                        save_fn=pf+'BK_'+bk_tag+'_rx_'+str(rx)+'_idet_'+str(det)+'_WVR_'+wvr_scan[:-4]+'_p3_'+str(p3_filt)
-                        save_fn2=pf+'ScanPairDate_'+bk_tag[:8]+'_rx_'+str(rx)+'_idet_'+str(det)+'_p3_'+str(p3_filt)
-                        pk_fn='BK_'+bk_tag+'_rx_'+str(rx)+'_idet_'+str(det)+'_WVR_'+wvr_scan[:-4]+'_p3_'+str(p3_filt)+'_pk.txt'
+                    xlabels=np.array(xlabels)
+                    xlabels_wvr=np.array(xlabels_wvr)
+
+                    xticks_mask=xticks[bk_time_mask]
+                    xlabels_mask=xlabels[bk_time_mask]
+                    xticks_wvr_mask=xticks_wvr[wvr_time_mask]
+                    xlabels_wvr_mask=xlabels_wvr[wvr_time_mask]
+
+                    D_sum_bk_tcut = D_sum_bk[:,bk_time_mask]
+                    D_diff_bk_tcut = D_diff_bk[:,bk_time_mask]
+                    wvr_atmo_tcut = wvr_atmo[:,wvr_time_mask]
+                    wvr_atmo_Trx_tcut = wvr_atmo_Trx[:,wvr_time_mask]
+
+                    nscans_bk = len(D_sum_bk[10,:])
+
+                    az_bk_tag = az_bk[int(fs_bk.sf[0]):int(fs_bk.ef[nscans_bk-1])]
+                    az_bk_shifted = [(az_bk_i + az_offs) for az_bk_i in az_bk_tag]
+
+                    nscans=len(wvr_atmo[10,:])
+
+                    tod_wvr = np.zeros(nscans)
+                    tod_wvr_list = []
+                    tod_wvr_Trx_list = []
+
+                    x_az_atmo=np.arange(len(wvr_atmo[:,10]))
+
+                    mask_match_bk = np.where((x_az_atmo>np.nanmin(az_bk_shifted)) & (x_az_atmo<np.nanmax(az_bk_shifted)))
+                    wvr_atmo_matchbk = wvr_atmo_tcut[mask_match_bk[0],:]
+
+                    wvr_atmo_Trx_matchbk = wvr_atmo_Trx_tcut[mask_match_bk[0],:]
+
+                    x_az_atmo_matchbk = [az_i-az_offs for az_i in x_az_atmo[mask_match_bk]]
+                    x_az_atmo_matchbk_labels = [int(az_i) for az_i in x_az_atmo_matchbk]
+                    #x_az_atmo_matchbk = x_az_atmo[mask_match_bk]
 
 
-                        wvr_atmo_T = wvr_atmo_Trx_matchbk - np.nanmean(wvr_atmo_Trx_matchbk)
+
+                    #BK-WVR correlation
+                    save_fn=pf+'BK_'+bk_tag+'_rx_'+str(rx)+'_idet_'+str(det)+'_WVR_'+wvr_scan[:-4]+'_p3_'+str(p3_filt)
+                    save_fn2=pf+'ScanPairDate_'+bk_tag[:8]+'_rx_'+str(rx)+'_idet_'+str(det)+'_p3_'+str(p3_filt)
+                    pk_fn=path_to_all+'BK_'+bk_tag+'_rx_'+str(rx)+'_idet_'+str(det)+'_WVR_'+wvr_scan[:-4]+'_p3_'+str(p3_filt)+'_pk.txt'
 
 
-                        BK_WVR_ts_corr(D_diff_bk_tcut, D_sum_bk_tcut, wvr_atmo_T, xlabels_mask, xlabels_wvr_mask, [save_fn, save_fn2],  pk_fn, label)
-            #
-                except Exception as e:
-                    print(e)
-                    print('Scan '+wvr_scan[:-4])
-                    print('rx = '+str(rx))
-                    print('det '+str(det))
-                    print('Failed.')
+                    wvr_atmo_T = wvr_atmo_Trx_matchbk - np.nanmean(wvr_atmo_Trx_matchbk)
+
+
+                    BK_WVR_ts_corr(D_diff_bk_tcut, D_sum_bk_tcut, wvr_atmo_T, xlabels_mask, xlabels_wvr_mask, [save_fn, save_fn2],  pk_fn, label)
+        #
+            # except Exception as e:
+            #     print(e)
+            #     print('Scan '+wvr_scan[:-4])
+            #     print('rx = '+str(rx))
+            #     print('det '+str(det))
+            #     print('Failed.')
 
 
 
@@ -894,9 +895,9 @@ def first_plots(wvr_scan, bk_tag, pf):
         label=label_list[t_i]
 
         for rx in rx_list:
-
+            print('wvr_atmo_Trj = ', wvr_atmo_Trj)
             wvr_atmo_Trx = wvr_atmo_Trj[str(rx)]#-np.nanmean(wvr_atmo_Trj[str(rx)])
-
+            print('wvr_atmo_Trx = ', wvr_atmo_Trx)
             x, y, det_a_list, det_b_list, x_pair, y_pair, det_pol= ets.det_fpu_location(rx, fn_save = pf+bk_tag+'det_fpu_location_'+str(rx)+'.png')
             x_b = x_pair[np.where(det_pol=='b')]
             x_a = x_pair[np.where(det_pol=='a')]
@@ -1180,44 +1181,44 @@ def first_plots(wvr_scan, bk_tag, pf):
 
                         xaxis=xticks_mask[:-1]
                         xlabels=xlabels_mask[:-1]
-
-                        pl.figure()
-
-                        fig,(ax1, ax2, ax0) = pl.subplots(3,1, figsize=(12,8))
-
-                        axes = [ax0, ax1, ax2]
-
-                        pos0=ax0.scatter(xaxis, corr_coeff_list, c='r')
-                        ax0.plot(xaxis, corr_coeff_list, c='k', alpha=0.5)
-                        ax0.set_title('PSum-PDiff Corr Coeff')
-                        ax0.set_ylabel('r')
-                        ax0.set_xticks(xaxis[::10])
-                        ax0.set_xticklabels(xlabels_mask[::10])
-
-                        pos1=ax1.imshow(D_sum_bk_tcut, aspect='auto', interpolation='nearest', extent=[bk_time_mask[0], bk_time_mask[len(bk_time_mask)-1], np.min(x_sum), np.max(x_sum)], origin='lower')
-                        ax1.set_title('BK'+str(rx)+' Pair Sum')
-                        # cbar1 = pl.colorbar(pos1, ax=ax1)
-                        # cbar1.set_label('T[K]')
-                        ax1.set_ylabel('Az[deg]')
-                        ax1.set_xticks(xticks_mask[::10])
-                        #ax1.set_xticklabels(xlabels_mask[::10])
-                        ax1.set_xticklabels([])
-                        #pl.yticks(fontsize=fs_ticks)
-
-                        pos2=ax2.imshow(D_diff_bk_tcut, aspect='auto', interpolation='nearest', extent=[bk_time_mask[0], bk_time_mask[len(bk_time_mask)-1], np.min(x_diff), np.max(x_diff)], origin='lower')
-                        ax2.set_title('BK'+str(rx)+' Pair Diff')
-                        cbar2 = pl.colorbar(pos2, ax=axes)
-                        cbar2.set_label('T[K]')
-                        ax2.set_ylabel('Az[deg]')
-                        ax2.set_xticks(xticks_mask[::10])
-                        ax2.set_xticklabels([])
-
-
-                        pl.suptitle(bk_tag+'\nrx = '+str(rx)+', GCP idx a/b = '+str(a_det)+'/'+str(b_det))
-
-                        pl.savefig(pf+'BK_'+bk_tag+'_rx_'+str(rx)+'_idet_'+str(det)+'_WVR_'+wvr_scan[:-4]+'_psum-pdiff_correlation_p3_'+str(p3_filt)+label+'.png')
-                        pl.savefig(pf+'ScanPairDate_'+bk_tag[:8]+'_rx_'+str(rx)+'_idet_'+str(det)+'_psum-pdiff_correlation_p3_'+str(p3_filt)+label+'.png')
-                        pl.close()
+                        #
+                        # pl.figure()
+                        #
+                        # fig,(ax1, ax2, ax0) = pl.subplots(3,1, figsize=(12,8))
+                        #
+                        # axes = [ax0, ax1, ax2]
+                        #
+                        # pos0=ax0.scatter(xaxis, corr_coeff_list, c='r')
+                        # ax0.plot(xaxis, corr_coeff_list, c='k', alpha=0.5)
+                        # ax0.set_title('PSum-PDiff Corr Coeff')
+                        # ax0.set_ylabel('r')
+                        # ax0.set_xticks(xaxis[::10])
+                        # ax0.set_xticklabels(xlabels_mask[::10])
+                        #
+                        # pos1=ax1.imshow(D_sum_bk_tcut, aspect='auto', interpolation='nearest', extent=[bk_time_mask[0], bk_time_mask[len(bk_time_mask)-1], np.min(x_sum), np.max(x_sum)], origin='lower')
+                        # ax1.set_title('BK'+str(rx)+' Pair Sum')
+                        # # cbar1 = pl.colorbar(pos1, ax=ax1)
+                        # # cbar1.set_label('T[K]')
+                        # ax1.set_ylabel('Az[deg]')
+                        # ax1.set_xticks(xticks_mask[::10])
+                        # #ax1.set_xticklabels(xlabels_mask[::10])
+                        # ax1.set_xticklabels([])
+                        # #pl.yticks(fontsize=fs_ticks)
+                        #
+                        # pos2=ax2.imshow(D_diff_bk_tcut, aspect='auto', interpolation='nearest', extent=[bk_time_mask[0], bk_time_mask[len(bk_time_mask)-1], np.min(x_diff), np.max(x_diff)], origin='lower')
+                        # ax2.set_title('BK'+str(rx)+' Pair Diff')
+                        # cbar2 = pl.colorbar(pos2, ax=axes)
+                        # cbar2.set_label('T[K]')
+                        # ax2.set_ylabel('Az[deg]')
+                        # ax2.set_xticks(xticks_mask[::10])
+                        # ax2.set_xticklabels([])
+                        #
+                        #
+                        # pl.suptitle(bk_tag+'\nrx = '+str(rx)+', GCP idx a/b = '+str(a_det)+'/'+str(b_det))
+                        #
+                        # pl.savefig(pf+'BK_'+bk_tag+'_rx_'+str(rx)+'_idet_'+str(det)+'_WVR_'+wvr_scan[:-4]+'_psum-pdiff_correlation_p3_'+str(p3_filt)+label+'.png')
+                        # pl.savefig(pf+'ScanPairDate_'+bk_tag[:8]+'_rx_'+str(rx)+'_idet_'+str(det)+'_psum-pdiff_correlation_p3_'+str(p3_filt)+label+'.png')
+                        # pl.close()
 
                         if p3_filt==True:
                             corr_list_p3True.append(np.nanmean(corr_coeff_list))
@@ -1385,7 +1386,7 @@ bk_tag4='20200921B09_dk293'
 wvr_scan_list=[wvr_scan4, wvr_scan3, wvr_scan2]
 bk_tag_list=[bk_tag4, bk_tag3, bk_tag2]
 
-pf='../../../Postings/WVR_postings/20220210_BK_WVR_correlations/plots/'
+pf=path_to_all+'../../../Postings/WVR_postings/20220210_BK_WVR_correlations/plots/'
 
 #start_up(wvr_scan3, bk_tag3, pf)
 
@@ -1394,12 +1395,12 @@ pf='../../../Postings/WVR_postings/20220210_BK_WVR_correlations/plots/'
 #     bk_tag=bk_tag_list[i_scan]
 #     #
     #try:
-wvr_scan = wvr_scan2
-bk_tag = bk_tag2
+wvr_scan = wvr_scan4
+bk_tag = bk_tag4
 #start_up(wvr_scan, bk_tag, pf)
 #first_plots(wvr_scan, bk_tag, pf)
 # except Exception as e:
 #     print('first_plots wvr_scan='+wvr_scan+' failed:')
 #     print(e)
 correlation_matrix(wvr_scan, bk_tag)
-corr_map_fpu(bk_tag, wvr_scan, pf)
+#corr_map_fpu(bk_tag, wvr_scan, pf)

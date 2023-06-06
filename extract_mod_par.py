@@ -30,7 +30,7 @@ class mod_parameters(object):
 
         '''
 
-    def unzip(self, month, path='../../wvr1_data_local/'):
+    def unzip(self, month, path='wvr1_data/'):
 
         os.system(f"rm "+path+month+"*.txt")
 
@@ -73,23 +73,24 @@ class mod_parameters(object):
             y = filtfilt(b, a, data)
             return y
 
-        def extract_params(day_str, path_to_data='../../wvr1_data_local/'):
+        def extract_params(day_str, path_to_data='wvr1_data/'):
             day=[]
             time=[]
             params_data = {'date_xaxis': [], 'p_single':[], 'p_single_err':[], 'p_double':[], 'p_double_err':[]}
             for fl in os.listdir(path_to_data):
-                #print(fl)
+                print('fl[0:8]=',fl[0:8])
+                print('day_str=',day_str)
                 #print(folder[0:8], day_str)
                 if fl[0:8]==day_str:
-                    print(fl[-15:])
+                    print(fl[-6:])
                     #print(folder[-6:])
-                    if fl[-15:]=='scanAz_fast.txt':
-                    #fl=path_to_data+folder+'/'+folder+'_fast.txt'
+                    if fl[-6:]=='scanAz':
+                        fl2=path_to_data+fl+'/'+fl+'_fast.txt'
                         #try:
                         print('day=', fl[0:8])
                         print('time=', fl[9:15])
                         print('Fitting file '+fl)
-                        D_clean, waz, mod_removed_data, p_double, p_err_double, p_single, p_err_single, calib_data_Gavg, FH=x.read_Az_fast(fl, pathtofn='', clean_method='fit')
+                        D_clean, waz, mod_removed_data, p_double, p_err_double, p_single, p_err_single, calib_data_Gavg, FH=x.read_Az_fast(fl2, pathtofn='', clean_method='fit')
                         day.append(fl[0:8])
                         time.append(fl[9:15])
                         params_data['p_single'].append(p_single)
@@ -128,7 +129,7 @@ class mod_parameters(object):
 
 
         #scatter plot of mod parameters vs times
-        path_to_data='../../wvr1_data_local/'
+        path_to_data='wvr1_data/'
         outpath='../output_plots/single_mod_tilt/'
         outhpath_singleslabfit='../output_plots/singleslabfit/'
 
@@ -185,10 +186,12 @@ class mod_parameters(object):
         C3_double=[]
 
         #if not os.path.exists(outpath+day_str+'_mod_parameters_constrained_pk3543.txt'):
+        if not (os.path.exists('mod_data/')):
+            os.system('mkdir mod_data')
 
         for day_str in day_str_list_full:
             #filelist=day_str+'_'+time+'_scanAz_fast.txt'
-            pickle_fn='../mod_data/'+day_str+'_mod_parameters_constrained_pk.txt' #output file
+            pickle_fn='mod_data/'+day_str+'_mod_parameters_constrained_pk.txt' #output file
 
             if not os.path.exists(pickle_fn):
                 #print(day_str)

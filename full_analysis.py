@@ -36,6 +36,8 @@ wvr_scan = '20201021_130135_scanAz_fast.txt'
 wvr_scan = '20170815_220105_scanAz_fast.txt'
 
 
+wvr_scan='20170815_120105_scanAz_fast.txt'
+
 template='SPole_annual_50.amc'
 
 month = wvr_scan[:6]

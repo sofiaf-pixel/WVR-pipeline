@@ -113,10 +113,12 @@ for month in month_list:
     C2_double=[]
     C3_double=[]
 
+    if not (os.path.exists('mod_data/')):
+        os.system('mkdir mod_data')
 
     for day_str in day_str_list_full:
     #
-        pickle_fn='../mod_data/'+day_str+'_mod_parameters_constrained_pk.txt'
+        pickle_fn='mod_data/'+day_str+'_mod_parameters_constrained_pk.txt'
     #     #
         #To plot the pickle file
 

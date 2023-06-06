@@ -49,7 +49,7 @@ class extract_ts(object):
         self.bk_struct =  bk_struct
         self.wvr_scan = wvr_scan
         self.bk_tag = bk_tag
-
+        self.path_to_all = '/Volumes/LaCie/BICEP/WVR_analysis/git_pipe/pipe/'
         self.pf = '../../../Postings/WVR_postings/20220210_BK_WVR_correlations/plots/'
 
         #
@@ -281,6 +281,8 @@ class extract_ts(object):
         y_pair=[]
         offset_from_bkel = []
         det_pol=[]
+        fn_splits = fn_save.split('/')
+        title = fn_splits[len(fn_splits)-1]
 
         for gcp_idx in idx[mask_zeroel]:
             if gcp_idx in idx_a:
@@ -305,11 +307,13 @@ class extract_ts(object):
         print(np.shape(x_pair))
 
         pl.figure(figsize=(10,6))
-        pl.scatter(x,y)
-        #pl.scatter(x_pair,y_pair, s=100, marker='*', c=offset_from_bkel)
-        pl.scatter(x_pair,y_pair, s=100, marker='o', c='r')
-        pl.title('FPU Map')
-        pl.colorbar()
+        pl.scatter(x,y, marker='o', c='k', alpha=0.4)
+        pl.scatter(x_pair,y_pair, s=100, marker='o', c=offset_from_bkel)
+        #pl.scatter(x_pair,y_pair, s=100, marker='o', c='r')
+        pl.colorbar(label='Offset from WVR El')
+        pl.xlabel('Az[deg]')
+        pl.ylabel('El[deg]')
+        pl.title('FPU Map\n'+title[:11])
         pl.savefig(fn_save)
         if show_plots==0:
             pl.close()
@@ -383,7 +387,7 @@ class extract_ts(object):
     def pl_tod_atmo(self, tag, tod, rx, i_det, az_offs_det, p3=False, gs=False, i_det_savefig=0, posting_folder='None', wvr_fn='None', showplots=0):
 
         if posting_folder == 'None':
-            posting_folder = self.pf
+            posting_folder = self.path_to_all + self.pf
 
         # ts_cal, ts_cal_p3 = self.calib_tod_rx(tod, rx)
         # a_shift, b_shift = self.find_rgl_idx(rx, tod.ind)
@@ -527,7 +531,7 @@ class extract_ts(object):
     def pl_tod_atmo_pairs(self, tag, tod, rx, i_det, az_offs_det, i_det_savefig=0, posting_folder='None', wvr_fn='None', showplots=0):
 
         if posting_folder == 'None':
-            posting_folder = self.pf
+            posting_folder = self.path_to_all + self.pf
 
         t=np.array(tod.std)
 
@@ -1008,16 +1012,16 @@ class extract_ts(object):
 
         pl.loglog()
 
-        pl.show()
+        pl.close()
 
 
 
     def plot_bk_atmo(self, rx_list, wvr_fn='None'):
         tod = self.bk_struct
         for rx in rx_list:
-            self.pl_tod_all(self.bk_tag, rx,  npairs=10, posting_folder=self.pf)
-            self.pl_tod_pair(self.bk_tag, rx, npairs=10, posting_folder=self.pf)
-            self.pl_tod_atmo(self.bk_tag, tod, rx, posting_folder=self.pf,  wvr_fn=wvr_fn)
+            self.pl_tod_all(self.bk_tag, rx,  npairs=10, posting_folder=self.path_to_all + self.pf)
+            self.pl_tod_pair(self.bk_tag, rx, npairs=10, posting_folder=self.path_to_all + self.pf)
+            self.pl_tod_atmo(self.bk_tag, tod, rx, posting_folder=self.path_to_all + self.pf,  wvr_fn=wvr_fn)
 
 
 
@@ -1296,7 +1300,7 @@ class extract_ts(object):
 
         def r_fpu(bk_tag, wvr_scan, rx, p3_filt, nscan, pf):
 
-            x, y, det_a_list, det_b_list, x_pair, y_pair, det_pol= self.det_fpu_location(rx, fn_save = pf+bk_tag+'det_fpu_location_'+str(rx)+'.png')
+            x, y, det_a_list, det_b_list, x_pair, y_pair, det_pol, el_offset = self.det_fpu_location(rx, fn_save = pf+bk_tag+'det_fpu_location_'+str(rx)+'.png')
 
             x_b = x_pair[np.where(det_pol=='b')]
             x_a = x_pair[np.where(det_pol=='a')]

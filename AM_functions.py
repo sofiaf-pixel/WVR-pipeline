@@ -35,7 +35,7 @@ class AM_functions(object):
 
         self.ch=[1.05,1.9,3.2,6.1]
         self.freqs=[self.IF-self.ch[3],self.IF-self.ch[2],self.IF-self.ch[1],self.IF-self.ch[0],self.IF+self.ch[0],self.IF+self.ch[1],self.IF+self.ch[2],self.IF+self.ch[3]]
-        self.path_to_all = '/Volumes/LaCie/BICEP/WVR_analysis/git_pipe/pipe/'
+        self.path_to_all = ''
 
     def plot_out_file(self, filename):
         with open('am_software/cfg_files/'+filename) as f:
@@ -46,13 +46,13 @@ class AM_functions(object):
         pl.xlim(170,200)
         pl.close()
 
-    def create_am_datfile(self, filename, path_to_data='../../wvr1_data_local/', template='SPole_annual_50.amc', spline=0, showplots=2, write_dat=1):
+    def create_am_datfile(self, filename, path_to_data='wvr1_data/', template='SPole_annual_50.amc', spline=0, showplots=2, write_dat=1):
         if not os.path.exists(f'am_datfiles/'+template[:-4]):
             os.makedirs(f'am_datfiles/'+template[:-4])
         if not os.path.exists(f'am_datfiles/'+template[:-4]+'/'+filename[:-4]):
             os.makedirs(f'am_datfiles/'+template[:-4]+'/'+filename[:-4])
 
-        data=re.read_elnod_fast(path_to_data+filename)
+        data=re.read_elnod_fast(path_to_data+filename[:-9]+'/'+filename)
 
         path='am_datfiles/'+template[:-4]+'/'+filename[:-4]
         if spline==0:
@@ -131,7 +131,7 @@ class AM_functions(object):
                         dat_fn='am_datfiles/'+template[:-4]+'/'+filename[:-4]+'/'+filename[:-4]+'_El'+str(round(el[i],1))+'_'+dir_string[i]+'_am'+open_endstring
 
                         with open('am_datfiles/'+template[:-4]+'/'+filename[:-4]+'/'+filename[:-4]+'_El'+str(round(el[i],1))+'_'+dir_string[i]+'_am'+open_endstring,'w+') as f:
-                            print('writing on'+'am_datfiles/'+template[:-4]+'/'+filename[:-4]+'/'+filename[:-4]+'_El'+str(round(el[i],1))+'_'+dir_string[i]+'_am'+open_endstring)
+                            print('writing on'+ 'am_datfiles/'+template[:-4]+'/'+filename[:-4]+'/'+filename[:-4]+'_El'+str(round(el[i],1))+'_'+dir_string[i]+'_am'+open_endstring)
                             f.write('1.25 1.50 {0}\n'.format(T0[i]))
                             f.write('3.25 2.50 {0}\n'.format(T1[i]))
                             f.write('5.5 2.00 {0}\n'.format(T2[i]))
@@ -521,7 +521,7 @@ class AM_functions(object):
                 for i in range(len(el_write)):
 
                     with open('am_datfiles/'+template[:-4]+'/'+filename[:-4]+'/'+filename[:-4]+'_El'+str(round(el_write[i],1))+'_am'+open_endstring,'w+') as f:
-                        print('writing on'+'am_datfiles/'+template[:-4]+'/'+filename[:-4]+'/'+filename[:-4]+'_El'+str(round(el_write[i],1))+'_am'+open_endstring)
+                        print('writing on'+' am_datfiles/'+template[:-4]+'/'+filename[:-4]+'/'+filename[:-4]+'_El'+str(round(el_write[i],1))+'_am'+open_endstring)
                         f.write('1.25 1.50 {0}\n'.format(T0_write[i]))
                         f.write('3.25 2.50 {0}\n'.format(T1_write[i]))
                         f.write('5.5 2.00 {0}\n'.format(T2_write[i]))
@@ -1096,10 +1096,10 @@ class AM_functions(object):
 
             return p_best[5], z_corr_err, delta
 
-    def create_am_datfile_Az(self,filename, pathtofn, clean_mod=3, clean_method='import_model', path_to_data='', template='SPole_annual_50.amc'):
+    def create_am_datfile_Az(self,filename, pathtofn='wvr1_data/', clean_mod=3, clean_method='import_model', path_to_data='', template='SPole_annual_50.amc'):
         if not os.path.exists(self.path_to_all+'am_datfiles_Az/'+template[:-4]):
             os.makedirs(self.path_to_all+'am_datfiles_Az/'+template[:-4])
-        if not os.path.exists(fself.path_to_all+'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]):
+        if not os.path.exists(self.path_to_all+'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]):
             os.makedirs(self.path_to_all+'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4])
 
         if clean_mod==0:
@@ -1115,10 +1115,14 @@ class AM_functions(object):
         wwaz,fs =  raz.findScans(waz)
         nscans = len(fs.s)
 
+        print('wwaz=', wwaz)
+        print(nscans)
+
         T0=mod_removed_data[:,0]
         T1=mod_removed_data[:,1]
         T2=mod_removed_data[:,2]
         T3=mod_removed_data[:,3]
+
 
         pickle_Temps['T0']=T0
         pickle_Temps['T1']=T1
@@ -1239,14 +1243,13 @@ class AM_functions(object):
         out_temp.writelines(out_lines)
         out_temp.close()
 
-    def fit_w_am(self, filename, path_to_data='', template= 'SPole_annual_50.amc', path_to_temp='Templates/', el_range=(0,90.), spline=2):
+    def fit_w_am(self, filename, path_to_data='wvr1_data/', template= 'SPole_annual_50.amc', path_to_temp='Templates/', el_range=(0,90.), spline=2):
         Npoints=0
 
         if not os.path.exists('am_datfiles/'+template[:-4]):
             os.makedirs('am_datfiles/'+template[:-4])
 
         path='am_datfiles/'+template[:-4]+'/'+filename[:-4]
-
 
         if not os.path.exists(path):
             os.makedirs(path)
@@ -1263,7 +1266,6 @@ class AM_functions(object):
         low_el, high_el = el_range
         fit_output = {'filename': [], 'El': [], 'dir':[], 'Nscale': [], 'Nscale_err': [],
         'pwv_meso':[], 'pwv_strato':[], 'pwv_tropo':[], 'pwv_total':[], 'pwv_los_total':[]}
-
         #try:
         self.create_am_datfile(filename, path_to_data=path_to_data, template=template, spline=spline, showplots=0)
         print('dat file created')
@@ -1300,7 +1302,6 @@ class AM_functions(object):
             if flist[-6:]==end_string:
                 path_to_dat=flist
                 #print(flist[-6:])
-                print('El=',flist[30:34])
                 el= el_list[findex]
                 zen_ang=90-el
                 print('zen_ang=', zen_ang)
@@ -1397,18 +1398,18 @@ class AM_functions(object):
             os.makedirs(self.path_to_all+'am_datfiles_Az/'+template[:-4])
 
         path=self.path_to_all+'am_datfiles_Az/'+template[:-4]+'/'+filename[:-4]
-        #pathtofn='../../wvr1_data_local/'+filename[:-9]+'/'
+        #pathtofn='wvr1_data'+filename[:-9]+'/'
         pickle_fn=path+'/'+filename[:-4]+'_clean_mod'+str(clean_mod)+'_method_'+str(clean_method)+'_fitoutput.txt' #just double mod removed+tilt_correction
         pickle_fn_temps=path+'/'+filename[:-4]+'_clean_mod'+str(clean_mod)+'_method_'+str(clean_method)+'_pickle_temps.txt'
         fit_output = {'filename': [], 'Az': [], 'scanN':[], 'Nscale': [], 'Nscale_err': [], 'pwv':[], 'pwv_err':[], 'el_correction':[]}
 
         if not os.path.exists(pickle_fn_temps):
-            pickle_Temps = self.create_am_datfile_Az(filename, pathtofn='', clean_mod=clean_mod, clean_method=clean_method)
+            pickle_Temps = self.create_am_datfile_Az(filename, pathtofn='wvr1_data/', clean_mod=clean_mod, clean_method=clean_method)
         else:
-            print(path_to_pwv+' already exists.\n')
+            print(pickle_fn_temps+' already exists.\n')
             answer = input("Do you want to overwrite it? ")
             if answer == "y":
-                pickle_Temps = self.create_am_datfile_Az(filename, pathtofn='', clean_mod=clean_mod, clean_method=clean_method)
+                pickle_Temps = self.create_am_datfile_Az(filename, pathtofn='wvr1_data/', clean_mod=clean_mod, clean_method=clean_method)
             elif answer == "n":
                 print('Loading pickle temps.')
                 f = open(pickle_fn_temps,'rb')
@@ -1523,7 +1524,7 @@ class AM_functions(object):
 
         return(fit_output)
 
-    def fit_w_am_zenith(self, filename, path_to_data='../../wvr1_data_local/', template= 'SPole_annual_50.amc', path_to_temp='Templates/'):
+    def fit_w_am_zenith(self, filename, path_to_data='wvr1_data/', template= 'SPole_annual_50.amc', path_to_temp='Templates/'):
         Npoints=0
 
         if not os.path.exists('am_datfiles/'+template[:-4]):
@@ -2114,7 +2115,7 @@ class AM_functions(object):
 
         return out_dict
 
-    def plot_Trj_el(self, day, remake_post_fig=1, rewrite_txt=1, datafolder='BAElnod_data/', posting_folder='/Volumes/Data Analysis/BICEP/Postings/WVR_postings/20210421_TrjSpectralExtrapolation/plots/'):
+    def plot_Trj_el(self, day, remake_post_fig=1, rewrite_txt=1, datafolder='', posting_folder=''):
             path='am_datfiles/SPole_annual_50/'
             fold_day=path+str(day)+'_bk_spectrum/'
 
@@ -2139,22 +2140,23 @@ class AM_functions(object):
                         os.makedirs(folder+'/spectra/plots')
 
                     test_data=scan+'.txt'
-                    path_to_test=datafolder+scan[:-5]+'/'
+                    path_to_test=''
 
                     if not os.path.exists(pk_pwv):
                         try:
-                            x_am.create_am_datfile(test_data, path_to_data=path_to_test, spline=2)
-                            x_am.fit_w_am(test_data, path_to_data=path_to_test, spline=2)
+                            self.create_am_datfile(test_data, path_to_data=path_to_test, spline=2)
+                            self.fit_w_am(test_data, path_to_data=path_to_test, spline=2)
                         except:
                             print('dat file '+test_data+' not found.')
                             dat_exist=0
-
+                    print('dat exist=', dat_exist)
                     if dat_exist==1:
                         T_spectrum_El55['day'].append(scan[:8])
                         T_spectrum_El55['time'].append(scan[9:15])
 
-                        Trj_dict={'fn': [], 'el':[], 'Trj':[]}
+                        Trj_dict={'fn': [], 'el':[], 'Trj':[], 'pwv': []}
                         for flist in os.listdir(folder):
+                            print('flist:', flist)
                             if (flist[-4:]=='.amc') & (flist[-12:-8]=='corr'):
                                 if flist[30:32]=='55':
                                     print(flist)
@@ -2274,7 +2276,7 @@ class AM_functions(object):
                                     Trj_dict['el'].append(float(newamcfile[30:34]))
                                     Trj_dict['Trj'].append(Trj_f)
 
-
+                                print(Trj_dict)
                                 f=open(fold_day+'/spectra/Trj_el_'+day+'_pk.txt',"wb")
                                 pickle.dump(Trj_dict, f)
                                 f.close()
@@ -2387,6 +2389,287 @@ class AM_functions(object):
             else:
                 read_txt()
 
+
+
+    def plot_Trj_skydip(self, wvr_scan, remake_post_fig=1, rewrite_txt=1, datafolder='', posting_folder='/Volumes/Data Analysis/BICEP/Postings/WVR_postings/20210421_TrjSpectralExtrapolation/plots/'):
+        path='am_datfiles/SPole_annual_50/'+wvr_scan[:-4]+'/'
+
+        def write_txt():
+
+            T_spectrum_El55={'day':[], 'time':[], '30GHz':[], '40GHz':[], '90GHz':[], '150GHz':[], '220GHz':[], '270GHz':[]}
+
+            dat_exist=1
+
+            pk_pwv=path+wvr_scan[:-4]+'_fitoutput_corr.txt'
+            # t = open(pk_pwv, 'rb')
+            # fit_output = pickle.load(t)
+            # t.close()
+
+            if not os.path.exists(path+'/spectra/plots'):
+                os.makedirs(path+'/spectra/plots')
+
+            test_data=wvr_scan
+
+
+            if not os.path.exists(pk_pwv):
+                try:
+                    self.create_am_datfile(test_data, path_to_data='wvr1_data/', spline=2)
+                    self.fit_w_am(test_data, path_to_data='wvr1_data/', spline=2)
+                except Exception as e:
+                    print('dat file '+test_data+' not found.')
+                    print(e)
+                    dat_exist=0
+
+            if dat_exist==1:
+                T_spectrum_El55['day'].append(wvr_scan[:8])
+                T_spectrum_El55['time'].append(wvr_scan[9:15])
+
+                Trj_dict={'fn': [], 'el':[], 'Trj':[]}
+                for amcfile in os.listdir(path):
+                    if (amcfile[-4:]=='.amc') & (amcfile[-12:-8]=='corr'):
+                        el=amcfile[30:32]
+
+                        a_file = open(path+'/'+amcfile, "r")
+                        list_of_lines = a_file.readlines()
+                        print(list_of_lines[27])
+                        list_of_lines[27] = "f 10 GHz  350 GHz  200 MHz\n"
+                        list_of_lines[28]=''
+                        list_of_lines[29]=''
+                        print(list_of_lines[27])
+                        b_file = open(path+'/spectra/'+amcfile[:-4]+'_bk.amc', "w")
+                        b_file.writelines(list_of_lines)
+                        b_file.close()
+
+                        newamcfile=amcfile[:-4]+'_bk.amc'
+
+                        os.system('am '+path+'/spectra/'+newamcfile+' >'+path+'/spectra/'+newamcfile[:-4]+'.out')
+
+                        outfile=path+'/spectra/'+newamcfile[:-4]+'.out'
+                        f=open(outfile,"r")
+                        lines=f.readlines()
+                        print(lines[0])
+
+                        freq=[]
+                        tau=[]
+                        Trj=[]
+                        for x in lines:
+                            freq.append(float(x.split(' ')[0]))
+                            tau.append(float(x.split(' ')[1]))
+                            Trj.append(float(x.split(' ')[2]))
+                        f.close()
+
+                        Trj_f=np.zeros(6)
+
+                        fig, ax = pl.subplots(6,1)
+                        avg30=np.mean(np.array(Trj)[np.where((np.array(freq)>25)&(np.array(freq)<35))])
+                        ax[0].plot(freq, Trj, label='Trj[30GHz]='+str(round(avg30,2)))
+                        Trj_f[0]=round(avg30,2)
+                        ax[0].set_ylabel('T_rj[K]')
+                        ax[0].set_xlim(25,35)
+                        int0=np.where((np.array(freq)>25)&(np.array(freq)<35))
+                        print(np.array(Trj))
+                        ax[0].set_ylim(np.min(np.array(Trj)[int0[0]]), np.max(np.array(Trj)[int0[0]]))
+                        ax[0].legend()
+
+                        avg40=np.mean(np.array(Trj)[np.where((np.array(freq)>35)&(np.array(freq)<=45))])
+                        ax[1].plot(freq, Trj, label='Trj[40GHz]='+str(round(avg40,2)))
+                        Trj_f[1]=round(avg40,2)
+                        ax[1].set_ylabel('T_rj[K]')
+                        ax[1].set_xlim(35,45)
+                        int1=np.where((np.array(freq)>35)&(np.array(freq)<45))
+                        print(np.array(Trj)[int1])
+                        ax[1].set_ylim(np.min(np.array(Trj)[int1[0]]), np.max(np.array(Trj)[int1[0]]))
+                        ax[1].legend()
+
+                        avg90=np.mean(np.array(Trj)[np.where((np.array(freq)>80.9)&(np.array(freq)<107.5))]) #BC=94.2; BW=26.7
+                        ax[2].plot(freq, Trj, label='Trj[90GHz]='+str(round(avg90,2)))
+                        Trj_f[2]=round(avg90,2)
+                        ax[2].set_ylabel('T_rj[K]')
+                        ax[2].set_xlim(80,108)
+                        int2=np.where((np.array(freq)>80.9)&(np.array(freq)<107.5))
+                        print(np.array(Trj)[int2])
+                        ax[2].set_ylim(np.min(np.array(Trj)[int2[0]]), np.max(np.array(Trj)[int2[0]]))
+                        ax[2].legend()
+
+                        avg150=np.mean(np.array(Trj)[np.where((np.array(freq)>127.3)&(np.array(freq)<170.7))]) #BC=149;BW=43.4
+                        ax[3].plot(freq, Trj, label='Trj[150GHz]='+str(round(avg150,2)))
+                        Trj_f[3]=round(avg150,2)
+                        ax[3].set_xlabel('freq[GHz]')
+                        ax[3].set_ylabel('T_rj[K]')
+                        ax[3].set_xlim(127, 171)
+                        int3=np.where((np.array(freq)>127.3)&(np.array(freq)<170.7))
+                        print(np.array(Trj)[int3])
+                        ax[3].set_ylim(np.min(np.array(Trj)[int3[0]]), np.max(np.array(Trj)[int3[0]]))
+                        ax[3].legend()
+
+                        avg220=np.mean(np.array(Trj)[np.where((np.array(freq)>205.6)&(np.array(freq)<256.8))]) #BC=231.2; BW=51.2
+                        ax[4].plot(freq, Trj, label='Trj[220GHz]='+str(round(avg220,2)))
+                        Trj_f[4]=round(avg220,2)
+                        ax[4].set_ylabel('T_rj[K]')
+                        ax[4].set_xlim(205,257)
+                        int4=np.where((np.array(freq)>205.6)&(np.array(freq)<256.8))
+                        print(np.array(Trj)[int4])
+                        ax[4].set_ylim(np.min(np.array(Trj)[int4[0]]), np.max(np.array(Trj)[int4[0]]))
+                        ax[4].legend()
+
+                        avg270=np.mean(np.array(Trj)[np.where((np.array(freq)>240.6)&(np.array(freq)<310.4))])#BC=275.5;BW=69.8
+                        ax[5].plot(freq, Trj, label='Trj[270GHz]='+str(round(avg270,2)))
+                        Trj_f[5]=round(avg270,2)
+                        ax[5].set_xlabel('freq[GHz]')
+                        ax[5].set_ylabel('T_rj[K]')
+                        ax[5].set_xlim(240,311)
+                        int5=np.where((np.array(freq)>240.6)&(np.array(freq)<310.4))
+                        print(np.array(Trj)[int5])
+                        ax[5].set_ylim(np.min(np.array(Trj)[int5[0]]), np.max(np.array(Trj)[int5[0]]))
+                        ax[5].legend()
+
+                        if not os.path.exists(path+'/spectra/plots/'):
+                            os.makedirs(path+'/spectra/plots/')
+                        # if remake_post_fig==1:
+                        #     plt.savefig(posting_path+'spectra/TrjinBKbands_'+newamcfile[:-4]+'.png')
+                        pl.title('El='+str(el))
+                        plt.close()
+
+                        plt.plot(freq, Trj)
+                        plt.ylabel('T_rj[K]')
+                        plt.xlabel('Freq[GHz]')
+
+                        plt.title(newamcfile[:-4])
+                        # if remake_post_fig==1:
+                        #     plt.savefig(posting_path+'spectra/TrjinBKbands_fullspectrum_'+newamcfile[:-4]+'.png')
+                        plt.savefig(path+'/spectra/plots/'+newamcfile[:-4]+'_fullspectrum.png')
+                        plt.close()
+
+                        Trj_dict['fn'].append(newamcfile[:-4]+'_Trj_pk.txt')
+                        Trj_dict['el'].append(float(newamcfile[30:34]))
+                        Trj_dict['Trj'].append(Trj_f)
+
+                        pl.plot(Trj_f)
+                        pl.title('el='+str(el))
+                        pl.close()
+
+
+                f=open(path+'Trj_el_'+wvr_scan[:-9]+'_pk.txt',"wb")
+                pickle.dump(Trj_dict, f)
+                f.close()
+
+                pl.plot(Trj_dict['el'], Trj_dict['Trj'][0])
+                pl.show()
+
+                return Trj_dict
+
+
+
+        def read_txt():
+            T_spectrum_El55={'day':[], 'time':[], '30GHz':[], '40GHz':[], '90GHz':[], '150GHz':[], '220GHz':[], '270GHz':[]}
+
+            f=open(path+'Trj_el_'+wvr_scan[:-9]+'_pk.txt',"rb")
+            Trj_dict=pickle.load(f)
+            f.close()
+            #
+            # print(Trj_dict)
+            # print(Trj_dict['el'][0])
+
+            El_list=[]
+            T30=[]
+            T40=[]
+            T90=[]
+            T150=[]
+            T210=[]
+            T270=[]
+
+            for i in range (len(Trj_dict['fn'])):
+                El_list.append(Trj_dict['el'][i])
+                T=Trj_dict['Trj'][i]
+                print(T)
+                T30.append(T[0])
+                T40.append(T[1])
+                T90.append(T[2])
+                T150.append(T[3])
+                T210.append(T[4])
+                T270.append(T[5])
+
+            # fig, ax = pl.subplots(2,1, sharex=True)
+            #
+            # ax[0].plot(El_list, T30, label='30GHz')
+            # ax[0].plot(El_list, T40, label='40GHz')
+            # ax[0].plot(El_list, T90, label='90GHz')
+            # ax[0].plot(El_list, T150, label='150GHz')
+            # ax[0].plot(El_list, T210, label='220GHz')
+            # ax[0].plot(El_list, T270, label='270GHz')
+            # # ax[0].xlabel('El[deg]')
+            # ax[0].set_ylabel('T_rj[K]')
+            # ax[0].legend()
+            #
+            # ax[1].scatter(fit_output['El'], fit_output['pwv'], s=5)
+            # ax[1].plot(fit_output['El'], fit_output['pwv'], c='k', alpha=0.5)
+            # ax[1].set_xlabel('El[deg]')
+            # ax[1].set_ylabel('PWV[um]')
+            # ax[1].set_xlim(55.,55.9)
+            #
+            # plt.suptitle(wvr_scan)
+            # if remake_post_fig==1:
+            #     plt.savefig(posting_path+'TrjandPWV_'+wvr_scan+'.png')
+            # plt.savefig(path+'/'+wvr_scan+'.png')
+            # #plt.show()
+            # plt.close()
+
+            T_spectrum_El55['30GHz'].append(T30[0])
+            T_spectrum_El55['40GHz'].append(T40[0])
+            T_spectrum_El55['90GHz'].append(T90[0])
+            T_spectrum_El55['150GHz'].append(T150[0])
+            T_spectrum_El55['220GHz'].append(T210[0])
+            T_spectrum_El55['270GHz'].append(T270[0])
+
+            if not os.path.exists(path+wvr_scan+'_bk_spectrum'):
+                os.makedirs(path+wvr_scan+'_bk_spectrum')
+
+            f=open(path+wvr_scan+'_bk_spectrum'+'/T_spectrum_El55.txt',"wb")
+            pickle.dump(T_spectrum_El55, f)
+            f.close()
+
+            f=open(path+wvr_scan+'_bk_spectrum'+'/T_spectrum_El55.txt',"rb")
+            T_spectrum_El55=pickle.load(f)
+            f.close()
+
+            time_axis=[]
+            for j in range (len(T_spectrum_El55['time'])):
+                t=T_spectrum_El55['time'][j]
+                time_axis.append(t[:2])
+
+            print('time_axis=', time_axis)
+            print('shape=', np.shape(time_axis))
+            print('T_spectrum_El55[\'30GHz\']=', T_spectrum_El55['30GHz'])
+            print('shape=', np.shape(T_spectrum_El55['30GHz']))
+
+            plt.scatter(time_axis, T_spectrum_El55['30GHz'], label='30GHz')
+            plt.plot(time_axis, T_spectrum_El55['30GHz'], c='k', alpha=0.5)
+            plt.scatter(time_axis, T_spectrum_El55['40GHz'], label='40GHz')
+            plt.plot(time_axis, T_spectrum_El55['40GHz'], c='k', alpha=0.5)
+            plt.scatter(time_axis, T_spectrum_El55['90GHz'], label='90GHz')
+            plt.plot(time_axis, T_spectrum_El55['90GHz'], c='k', alpha=0.5)
+            plt.scatter(time_axis, T_spectrum_El55['150GHz'], label='150GHz')
+            plt.plot(time_axis, T_spectrum_El55['150GHz'], c='k', alpha=0.5)
+            plt.scatter(time_axis, T_spectrum_El55['220GHz'], label='220GHz')
+            plt.plot(time_axis, T_spectrum_El55['220GHz'], c='k', alpha=0.5)
+            plt.scatter(time_axis, T_spectrum_El55['270GHz'], label='270GHz')
+            plt.plot(time_axis, T_spectrum_El55['270GHz'], c='k', alpha=0.5)
+            plt.xlabel('UTC time')
+            plt.ylabel('Trj[K]')
+            plt.suptitle('Trj Time Fluctuations at El=55deg')
+            plt.title(day)
+            plt.legend()
+            plt.savefig(path+day+'_bk_spectrum'+'/T_spectrum_El55.png')
+            # if remake_post_fig==1:
+            #     plt.savefig(posting_path+'T_spectrum_El55_'+day+'.png')
+            plt.show()
+
+        if rewrite_txt==1:
+            write_txt()
+            read_txt()
+        else:
+            read_txt()
+
     def plot_Trj_az(self, scan, Az_min=0, Az_max=360, remake_post_fig=1, rewrite_txt=0, rewrite_amc=0, out_pk='Trj_pk_BAK.txt', datafolder='BAElnod_data/', posting_folder='/Volumes/LaCie/BICEP/Postings/WVR_postings/20210421_TrjSpectralExtrapolation/plots/'):
 
         def plot_atmo(waz, pwv_list, title='', show=0):
@@ -2407,6 +2690,10 @@ class AM_functions(object):
 
 
         def Trjatmo_from_pwvatmo(fn):
+
+            if not os.path.exists('am_datfiles_Az/SPole_annual_50/'+fn[:-4]+'/'):
+                os.makedirs('am_datfiles_Az/SPole_annual_50/'+fn[:-4]+'/')
+
             pickle_fn=self.path_to_all+'am_datfiles_Az/SPole_annual_50/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_fitoutput.txt'
             pickle_fn_temps=self.path_to_all+'am_datfiles_Az/SPole_annual_50/'+fn[:-4]+'/'+fn[:-4]+'_clean_mod3_method_import_model_pickle_temps.txt'
             #using fit or import_model should be the same here as I am just using it to extract waz
@@ -2610,11 +2897,10 @@ class AM_functions(object):
                 Trj_dict=pickle.load(f)
                 f.close()
             else:
-                if os.path.exists(folder+'/spectra/'+out_pk[:-4]+'_old.txt'):
-                    pk_input = input(out_pk+" does not exist. Which pk file do you want to use?\n")
-                    f=open(folder+'/spectra/'+pk_input,"rb")
-                    Trj_dict=pickle.load(f)
-                    f.close()
+                pk_input = input(out_pk+" does not exist. Which pk file do you want to use?\n")
+                f=open(folder+'/spectra/'+pk_input,"rb")
+                Trj_dict=pickle.load(f)
+                f.close()
 
             El_list=[]
             T30=[]

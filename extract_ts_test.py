@@ -17,9 +17,6 @@ class struct(object):
     pass
 
 
-
-
-
 x_am=am.AM_functions()
 
 pf='../../../Postings/WVR_postings/20220110_BK_WVR_comparison_v2/plots/'
